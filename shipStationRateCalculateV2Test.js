@@ -1,3 +1,6 @@
+// 版本V2 
+// 时间： 2025 Jane 9
+
 function postShippingRates() {
   const startTime = new Date().getTime(); // 记录任务开始时间
   const maxExecutionTime = 300 * 1000; // 设置最大执行时间为 300 秒
