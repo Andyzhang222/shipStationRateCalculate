@@ -1,4 +1,7 @@
 function postShippingRates() {
+  const startTime = new Date().getTime(); // 记录任务开始时间
+  const maxExecutionTime = 300 * 1000; // 设置最大执行时间为 300 秒
+
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   const lastRow = sheet.getLastRow();
   const batchSize = 10; // 每次处理的行数
@@ -14,8 +17,8 @@ function postShippingRates() {
 
   const endRow = Math.min(startRow + batchSize - 1, lastRow);
 
-  const username = "";
-  const password = "";
+  const username = ""; // 填入用户名
+  const password = ""; // 填入密码
 
   const targetServices = [
     { serviceCode: "fedex_ground", serviceName: "FedEx Ground" },
@@ -26,6 +29,13 @@ function postShippingRates() {
   ];
 
   for (let i = startRow; i <= endRow; i++) {
+    const currentTime = new Date().getTime();
+    if (currentTime - startTime >= maxExecutionTime) {
+      console.log("达到最大执行时间，提前退出任务。");
+      createNextTrigger(); // 提前退出时创建新的触发器
+      return; // 停止任务
+    }
+
     const fromPostalCode = sheet.getRange(i, 2).getValue();
     const toState = sheet.getRange(i, 3).getValue();
     const toCountry = sheet.getRange(i, 4).getValue();
@@ -40,10 +50,14 @@ function postShippingRates() {
 
     let allResults = [];
 
-    const toPostalCodes = [
-      { toPostalCode: toPostalCode1, label: "to postal code 1" },
-      ...(toPostalCode2 ? [{ toPostalCode: toPostalCode2, label: "to postal code 2" }] : [])
-    ];
+    const toPostalCodes = [];
+    if (toPostalCode1) toPostalCodes.push({ toPostalCode: toPostalCode1, label: "to postal code 1" });
+    if (toPostalCode2) toPostalCodes.push({ toPostalCode: toPostalCode2, label: "to postal code 2" });
+
+    if (toPostalCodes.length === 0) {
+      console.log(`跳过第 ${i} 行，没有有效的目的地邮政编码。`);
+      continue;
+    }
 
     const carriers = [
       { code: "fedex", name: "FedEx" },
