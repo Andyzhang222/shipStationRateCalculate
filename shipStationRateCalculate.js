@@ -1,7 +1,7 @@
 function postShippingRates() {
   const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
   const lastRow = sheet.getLastRow();
-  const batchSize = 10; // 每次处理的行数
+  const batchSize = 50; // 每次处理的行数
   const markerColumn = 18; // 标记所在的列号
 
   // 找到标记行号
@@ -14,8 +14,8 @@ function postShippingRates() {
 
   const endRow = Math.min(startRow + batchSize - 1, lastRow);
 
-  const username = "";
-  const password = "";
+  const username = "ce11c5e742a74da080eef641a0a63be3";
+  const password = "a310750259e94c4da3198b1f0613bf8c";
 
   const targetServices = [
     { serviceCode: "fedex_ground", serviceName: "FedEx Ground" },
